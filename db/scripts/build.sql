@@ -18,17 +18,17 @@ DROP TABLE IF EXISTS sectors cascade;
 DROP TABLE IF EXISTS industries cascade;
 DROP TABLE IF EXISTS historic_prices cascade;
 
-SELECT DISTINCT symbol, company_name
-INTO stocks
-FROM imported_data_master;
+-- SELECT DISTINCT symbol, company_name
+-- INTO stocks
+-- FROM imported_data_master;
 
 
-ALTER TABLE stocks
-add id serial primary key,
-add sector_id int,
-add industry_id int,
-add created_at timestamp without time zone DEFAULT NOW(),
-add updated_at timestamp without time zone DEFAULT NOW();
+-- ALTER TABLE stocks
+-- add id serial primary key,
+-- add sector_id int,
+-- add industry_id int,
+-- add created_at timestamp without time zone DEFAULT NOW(),
+-- add updated_at timestamp without time zone DEFAULT NOW();
 
 SELECT DISTINCT split_part(industry, '-', 1) AS name
 INTO sectors
@@ -47,6 +47,36 @@ ALTER TABLE industries
 add id serial primary key,
 add created_at timestamp without time zone DEFAULT NOW(),
 add updated_at timestamp without time zone DEFAULT NOW();
+
+CREATE TABLE stocks(
+  id serial primary key,
+  symbol text,
+  company_name text,
+  sector_id int,
+  industry_id int,
+  created_at timestamp without time zone DEFAULT NOW(),
+  updated_at timestamp without time zone DEFAULT NOW()
+);
+
+INSERT INTO stocks (
+  symbol,
+  company_name,
+  sector_id,
+  industry_id
+)
+
+SELECT
+DISTINCT symbol,
+company_name,
+sectors.id as sector_id,
+industries.id as industry_id
+FROM
+imported_data_master
+INNER JOIN sectors
+on sectors.name = split_part(industry, '-', 1)
+INNER JOIN industries
+on industries.name = split_part(industry, '-', 2)
+;
 
 
 CREATE TABLE historic_prices(
@@ -85,34 +115,3 @@ FROM imported_data_master
 INNER JOIN stocks
 on stocks.symbol = imported_data_master.symbol
 ;
-INSERT INTO stocks (
-  sector_id,
-  industry_id
-)
-
--- split_part(sector, '-', 2) as sector_name,
--- sectors.name,
--- split_part(industry, '-', 1) as industry_name,
-SELECT
--- DISTINCT symbol,
-sectors.id as sector_id,
-industries.id as industry_id
-FROM
-imported_data_master
-INNER JOIN sectors
-on sectors.name = split_part(industry, '-', 1)
-INNER JOIN industries
-on industries.name = split_part(industry, '-', 2)
-;
-
-
--- SELECT
---   distinct symbol,
---   split_part(industry, '-', 1) as name,
---   sectors.name,
---   sectors.id as sector_id
--- FROM
---   imported_data_master
---   left join sectors
---   on sectors.name
---   = name;
