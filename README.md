@@ -1,24 +1,12 @@
-# README
+# Rails 5.1 Postgres Active Record Deep Dive
+--
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+### About:
+Investigation into the relationship between Postgres and ActiveRecord.  A deep dive to highlight how they complement, where they diverge, and where they confound in a Rails project.
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Init Project
+    git clone https://github.com/trendwithin/pg_ar_deep_dive.git**
+    rails db create
+    rails db migrate
+    make clean --directory db/make_files/ && make --directory db/make_files/
